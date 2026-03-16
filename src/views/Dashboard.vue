@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { formatMoney } from '@/utils/format'
+import DashboardAd from '@/components/admin/DashboardAd.vue'
 
 interface DashboardAlertItem {
   type: string
@@ -362,6 +363,8 @@ onMounted(() => {
       {{ dashboardError }}
     </div>
 
+    <DashboardAd slot-code="dashboard_top_banner" layout="banner" />
+
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <Card>
         <CardHeader class="pb-2">
@@ -442,6 +445,8 @@ onMounted(() => {
           <div class="mt-1 text-xs text-muted-foreground">{{ overview?.timezone || '-' }}</div>
         </CardContent>
       </Card>
+
+      <DashboardAd slot-code="dashboard_kpi_card" layout="card" />
     </div>
 
     <div class="grid gap-4 xl:grid-cols-2">
@@ -575,6 +580,8 @@ onMounted(() => {
       </Card>
     </div>
 
+    <DashboardAd slot-code="dashboard_sponsored" layout="compact" />
+
     <div class="grid gap-4 xl:grid-cols-2">
       <Card>
         <CardHeader class="pb-2">
@@ -618,5 +625,6 @@ onMounted(() => {
         </CardContent>
       </Card>
     </div>
+
   </div>
 </template>

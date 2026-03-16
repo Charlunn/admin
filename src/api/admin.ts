@@ -33,6 +33,7 @@ import type {
   AdminTelegramBotRuntimeStatus,
   AdminTelegramBroadcast,
   AdminTelegramBroadcastUser,
+  AdRenderResponse,
 } from './types'
 
 export interface CaptchaPayload {
@@ -439,4 +440,10 @@ export const adminAPI = {
   deleteTelegramBroadcast: (id: number) => api.delete<ApiResponse>(`/admin/telegram-bot/broadcasts/${id}`),
   getTelegramBroadcastUsers: (params?: Record<string, unknown>) =>
     api.get<ApiResponse<AdminTelegramBroadcastUser[]>>('/admin/telegram-bot/users', { params }),
+
+  // 广告代理
+  renderAdSlot: (slotCode: string, params?: Record<string, string>) =>
+    api.get<ApiResponse<AdRenderResponse>>(`/admin/ads/render/${slotCode}`, { params }),
+  reportAdImpression: (data: { tenant: string; client: string; slot_code: string; items: { ad_id: number; impression_token: string }[] }) =>
+    api.post<ApiResponse>('/admin/ads/impression', data),
 }
