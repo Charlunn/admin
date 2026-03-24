@@ -107,6 +107,7 @@ const availableSkus = computed(() => {
 })
 
 const skuFilterDisabled = computed(() => !currentProductId.value || availableSkus.value.length === 0)
+const requireExplicitSkuSelection = computed(() => !!currentProductId.value && availableSkus.value.length > 1)
 const currentSkuLabel = computed(() => {
   if (!currentSkuId.value) return t('admin.cardSecrets.skuAll')
   const matched = availableSkus.value.find((sku) => sku.id === currentSkuId.value)
@@ -343,6 +344,9 @@ onMounted(async () => {
           </Button>
         </div>
         <p class="mt-3 text-xs text-muted-foreground">{{ t('admin.cardSecretImports.targetHint') }}</p>
+        <p v-if="requireExplicitSkuSelection && !currentSkuId" class="mt-2 text-xs text-destructive">
+          {{ t('admin.cardSecrets.errors.skuRequired') }}
+        </p>
       </div>
 
       <div>
@@ -354,6 +358,7 @@ onMounted(async () => {
           :model-value="true"
           :product-id="currentProductId || 0"
           :sku-id="currentSkuId"
+          :require-sku-selection="requireExplicitSkuSelection"
           @success="handleImportSuccess"
         />
       </div>

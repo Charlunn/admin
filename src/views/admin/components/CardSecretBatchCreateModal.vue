@@ -10,6 +10,7 @@ const props = defineProps<{
   modelValue: boolean
   productId: number
   skuId: number
+  requireSkuSelection?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -54,6 +55,10 @@ const handleBatchCreate = async () => {
   batchSuccess.value = ''
   if (!props.productId) {
     batchError.value = t('admin.cardSecrets.errors.productRequired')
+    return
+  }
+  if (props.requireSkuSelection && !props.skuId) {
+    batchError.value = t('admin.cardSecrets.errors.skuRequired')
     return
   }
   const secrets = batchForm.value.secrets
@@ -115,6 +120,10 @@ const handleImport = async () => {
     importError.value = t('admin.cardSecrets.errors.productRequired')
     return
   }
+  if (props.requireSkuSelection && !props.skuId) {
+    importError.value = t('admin.cardSecrets.errors.skuRequired')
+    return
+  }
   if (!importForm.value.file) {
     importError.value = t('admin.cardSecrets.errors.fileRequired')
     return
@@ -170,7 +179,7 @@ const handleImport = async () => {
         </div>
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button class="w-full sm:w-auto" type="button" variant="outline" @click="resetBatchForm">{{ t('admin.common.reset') }}</Button>
-          <Button class="w-full sm:w-auto" type="submit" :disabled="batchSubmitting">
+          <Button class="w-full sm:w-auto" type="submit" :disabled="batchSubmitting || !!(props.requireSkuSelection && !props.skuId)">
             {{ batchSubmitting ? t('admin.cardSecrets.submitting') : t('admin.cardSecrets.submitBatch') }}
           </Button>
         </div>
@@ -209,7 +218,7 @@ const handleImport = async () => {
         </div>
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button class="w-full sm:w-auto" type="button" variant="outline" @click="resetImportForm">{{ t('admin.common.reset') }}</Button>
-          <Button class="w-full sm:w-auto" type="submit" :disabled="importSubmitting">
+          <Button class="w-full sm:w-auto" type="submit" :disabled="importSubmitting || !!(props.requireSkuSelection && !props.skuId)">
             {{ importSubmitting ? t('admin.cardSecrets.importing') : t('admin.cardSecrets.startImport') }}
           </Button>
         </div>
