@@ -43,6 +43,7 @@ const sceneOptions = [
   { label: () => t('admin.media.scenes.editor'), value: 'editor' },
   { label: () => t('admin.media.scenes.common'), value: 'common' },
   { label: () => t('admin.media.scenes.telegram'), value: 'telegram' },
+  { label: () => t('admin.media.scenes.upstream'), value: 'upstream' },
 ]
 
 async function fetchMedia(page = 1) {
@@ -62,7 +63,7 @@ async function fetchMedia(page = 1) {
     pagination.page = page
     pagination.total_page = Math.ceil(total / pagination.page_size)
   } catch {
-    notifyError(t('admin.media.errors.uploadFailed', { message: '' }))
+    // silent on fetch error
   } finally {
     loading.value = false
   }

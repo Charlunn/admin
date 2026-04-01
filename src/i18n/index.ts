@@ -1416,6 +1416,7 @@ const messages = {
           editor: '编辑器',
           common: '通用',
           telegram: 'Telegram',
+          upstream: '上游同步',
         },
         card: {
           dimensions: '{width} x {height}',
@@ -4356,6 +4357,7 @@ const messages = {
           editor: '編輯器',
           common: '通用',
           telegram: 'Telegram',
+          upstream: '上游同步',
         },
         card: {
           dimensions: '{width} x {height}',
@@ -7296,6 +7298,7 @@ const messages = {
           editor: 'Editor',
           common: 'Common',
           telegram: 'Telegram',
+          upstream: 'Upstream Sync',
         },
         card: {
           dimensions: '{width} x {height}',
