@@ -42,6 +42,7 @@ import {
   Send,
   Crown,
   Bell,
+  ImageIcon,
 } from 'lucide-vue-next'
 import { Menu } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
@@ -223,6 +224,12 @@ const navGroups = computed<NavGroup[]>(() => {
           to: '/posts',
           icon: Newspaper,
           permission: 'GET:/admin/posts',
+        },
+        {
+          label: t('admin.navItems.media'),
+          to: '/media',
+          icon: ImageIcon,
+          permission: 'GET:/admin/media',
         },
       ],
     },

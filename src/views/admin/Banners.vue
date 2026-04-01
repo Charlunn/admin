@@ -12,6 +12,7 @@ import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from '@/compon
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import TableSkeleton from '@/components/TableSkeleton.vue'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import MediaPicker from '@/components/admin/MediaPicker.vue'
 import { getImageUrl } from '@/utils/image'
 import { notifyError } from '@/utils/notify'
 import { confirmAction } from '@/utils/confirm'
@@ -20,13 +21,10 @@ import { useFormValidation, rules } from '@/composables/useFormValidation'
 const { t } = useI18n()
 const route = useRoute()
 const loading = ref(false)
-const uploading = ref(false)
 const submitting = ref(false)
 const showModal = ref(false)
 const isEditing = ref(false)
 const currentLang = ref('zh-CN')
-const fileInput = ref<HTMLInputElement | null>(null)
-const mobileFileInput = ref<HTMLInputElement | null>(null)
 
 const languages = computed(() => [
   { code: 'zh-CN', name: t('admin.common.lang.zhCN') },
@@ -281,40 +279,6 @@ const handleDelete = async (banner: AdminBanner) => {
   }
 }
 
-const triggerFileInput = () => {
-  fileInput.value?.click()
-}
-
-const triggerMobileFileInput = () => {
-  mobileFileInput.value?.click()
-}
-
-const uploadBannerImage = async (file: File, target: 'image' | 'mobile_image') => {
-  uploading.value = true
-  try {
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await adminAPI.upload(formData, 'banner')
-    form[target] = (res.data.data as Record<string, string>)?.url || ''
-  } catch {
-    notifyError(t('admin.banners.errors.uploadFailed'))
-  } finally {
-    uploading.value = false
-  }
-}
-
-const handleFileChange = async (event: Event) => {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  await uploadBannerImage(file, 'image')
-}
-
-const handleMobileFileChange = async (event: Event) => {
-  const file = (event.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  await uploadBannerImage(file, 'mobile_image')
-}
-
 const openEditById = async (rawId: unknown) => {
   const id = Number(rawId)
   if (!Number.isFinite(id) || id <= 0) return
@@ -496,33 +460,13 @@ watch(
 
             <div class="md:col-span-2">
               <label class="mb-1.5 block text-xs font-medium text-muted-foreground">{{ t('admin.banners.form.image') }}</label>
-              <div
-                class="cursor-pointer rounded-lg border border-dashed border-border p-4 text-center hover:border-primary"
-                @click="triggerFileInput"
-              >
-                <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
-                <div v-if="form.image" class="space-y-2">
-                  <img :src="getImageUrl(form.image)" class="mx-auto h-36 rounded-lg object-cover" />
-                  <div class="text-xs text-muted-foreground">{{ uploading ? t('admin.common.loading') : t('admin.banners.form.imageReplaceTip') }}</div>
-                </div>
-                <div v-else class="text-sm text-muted-foreground">{{ t('admin.banners.form.imageUploadHint') }}</div>
-              </div>
+              <MediaPicker v-model="form.image" scene="banner" />
               <p v-if="errors.image" class="text-xs text-destructive mt-1">{{ errors.image }}</p>
             </div>
 
             <div class="md:col-span-2">
               <label class="mb-1.5 block text-xs font-medium text-muted-foreground">{{ t('admin.banners.form.mobileImage') }}</label>
-              <div
-                class="cursor-pointer rounded-lg border border-dashed border-border p-4 text-center hover:border-primary"
-                @click="triggerMobileFileInput"
-              >
-                <input ref="mobileFileInput" type="file" class="hidden" accept="image/*" @change="handleMobileFileChange" />
-                <div v-if="form.mobile_image" class="space-y-2">
-                  <img :src="getImageUrl(form.mobile_image)" class="mx-auto h-36 rounded-lg object-cover" />
-                  <div class="text-xs text-muted-foreground">{{ uploading ? t('admin.common.loading') : t('admin.banners.form.imageReplaceTip') }}</div>
-                </div>
-                <div v-else class="text-sm text-muted-foreground">{{ t('admin.banners.form.imageUploadHint') }}</div>
-              </div>
+              <MediaPicker v-model="form.mobile_image" scene="banner" />
               <Input v-model="form.mobile_image" class="mt-2" :placeholder="t('admin.banners.form.mobileImagePlaceholder')" />
             </div>
 

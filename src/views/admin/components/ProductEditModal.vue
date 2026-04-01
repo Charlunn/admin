@@ -3,8 +3,9 @@ import { computed, ref, reactive, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { adminAPI } from '@/api/admin'
 import type { AdminProduct, AdminCategory, AdminProductSKU, AdminPaymentChannel, LocalizedText } from '@/api/types'
+import MediaPicker from '@/components/admin/MediaPicker.vue'
 import RichEditor from '@/components/RichEditor.vue'
-import { getFirstImageUrl } from '@/utils/image'
+// image utils removed - MediaPicker handles image display
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -28,13 +29,11 @@ const emit = defineEmits<{
 }>()
 
 const { t, locale } = useI18n()
-const uploading = ref(false)
 const submitting = ref(false)
 const isEditing = ref(false)
 const paymentChannels = ref<AdminPaymentChannel[]>([])
 const editingIsMapped = ref(false)
 const initialCategoryID = ref<number | null>(null)
-const fileInput = ref<HTMLInputElement | null>(null)
 const newTag = ref('')
 const currentLang = ref('zh-CN')
 
@@ -623,39 +622,6 @@ const removeTag = (index: number) => {
   form.tags.splice(index, 1)
 }
 
-const triggerFileInput = () => fileInput.value?.click()
-
-const handleFileChange = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (file) uploadImage(file)
-}
-
-const handleDrop = (e: DragEvent) => {
-  const file = e.dataTransfer?.files[0]
-  if (file && file.type.startsWith('image/')) uploadImage(file)
-}
-
-const uploadImage = async (file: File) => {
-  uploading.value = true
-  const formData = new FormData()
-  formData.append('file', file)
-
-  try {
-    const res = await adminAPI.upload(formData, 'product')
-    const imageUrl = (res.data.data as Record<string, unknown>)?.url as string
-    if (form.images.length > 0) {
-      form.images[0] = imageUrl
-    } else {
-      form.images.push(imageUrl)
-    }
-  } catch (err) {
-    if (isNotifiedError(err)) return
-    notifyError(t('admin.products.errors.uploadFailed'))
-  } finally {
-    uploading.value = false
-  }
-}
-
 // Watch productId to determine create vs edit mode and fetch product details
 watch(
   () => props.productId,
@@ -1025,25 +991,7 @@ watch(
 
           <div class="col-span-1 md:col-span-2">
             <label class="block text-xs font-medium text-muted-foreground mb-1.5">{{ t('admin.products.form.images') }}</label>
-            <div
-              class="border border-dashed border-border rounded-xl p-6 text-center cursor-pointer relative"
-              @click="triggerFileInput"
-              @drop.prevent="handleDrop"
-              @dragover.prevent
-            >
-              <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
-              <div v-if="form.images.length > 0" class="space-y-2">
-                <img :src="getFirstImageUrl(form.images)" class="h-32 mx-auto rounded-lg object-cover" :alt="form.title[currentLang]" />
-                <div class="text-xs text-muted-foreground">{{ t('admin.products.form.imageReplaceTip') }}</div>
-                <div class="text-xs text-muted-foreground font-mono">{{ getFirstImageUrl(form.images) }}</div>
-              </div>
-              <div v-else class="text-muted-foreground">
-                <span class="text-sm">{{ t('admin.products.form.imageUploadHint') }}</span>
-              </div>
-              <div v-if="uploading" class="absolute inset-0 bg-black/40 flex items-center justify-center rounded-xl">
-                <div class="animate-spin h-8 w-8 border-b-2 border-white rounded-full"></div>
-              </div>
-            </div>
+            <MediaPicker v-model="form.images" :multiple="true" scene="product" />
           </div>
 
           <div class="col-span-1 md:col-span-2">

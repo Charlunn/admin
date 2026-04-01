@@ -299,6 +299,20 @@ export interface AdminPromotion {
 }
 
 // --- Banner ---
+// --- Media ---
+export interface AdminMedia {
+  id: number
+  name: string
+  filename: string
+  path: string
+  mime_type: string
+  size: number
+  scene: string
+  width: number
+  height: number
+  created_at: string
+}
+
 export interface AdminBanner {
   id: number
   name: string

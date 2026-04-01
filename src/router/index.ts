@@ -108,6 +108,12 @@ const routes = [
         meta: { permission: 'GET:/admin/banners' },
       },
       {
+        path: 'media',
+        name: 'media',
+        component: () => import('@/views/admin/Media.vue'),
+        meta: { permission: 'GET:/admin/media' },
+      },
+      {
         path: 'coupons',
         name: 'coupons',
         component: () => import('@/views/admin/Coupons.vue'),

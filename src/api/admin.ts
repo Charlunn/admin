@@ -14,6 +14,7 @@ import type {
   AdminPromotion,
   AdminBanner,
   AdminPost,
+  AdminMedia,
   AdminPaymentChannel,
   AdminPayment,
   AdminUser,
@@ -272,6 +273,11 @@ export const adminAPI = {
       },
     })
   },
+  // 素材管理
+  getMedia: (params?: Record<string, unknown>) => api.get<ApiResponse<AdminMedia[]>>('/admin/media', { params }),
+  updateMedia: (id: number, data: { name: string }) => api.put<ApiResponse>(`/admin/media/${id}`, data),
+  deleteMedia: (id: number) => api.delete<ApiResponse>(`/admin/media/${id}`),
+
   getProducts: (params?: Record<string, unknown>) => api.get<ApiResponse<AdminProduct[]>>('/admin/products', { params }),
   getProduct: (id: number) => api.get<ApiResponse<AdminProduct>>(`/admin/products/${id}`),
   createProduct: (data: Partial<AdminProduct>) => api.post<ApiResponse<AdminProduct>>('/admin/products', data),
