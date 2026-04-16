@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "http://124.222.167.79:18080/api/$1"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "http://124.222.167.79:18080/uploads/$1"
+    }
+  ]
+}
